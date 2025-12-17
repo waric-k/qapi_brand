@@ -1,0 +1,546 @@
+whitelabel override: custom login page (clean implementation)
+{% extends "templates/web.html" %}
+{% set full_width = 1 %}
+
+{% block style %}
+<style>
+  html,
+  body,
+  .web-page {
+    height: 100%;
+    margin: 0;
+  }
+
+  header.navbar,
+  .navbar,
+  footer,
+  .web-footer,
+  .page-header {
+    display: none !important;
+  }
+
+  .page-content,
+  .page-container,
+  .container {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* Brand logo */
+  .brand-logo-wrapper {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
+    padding: 6px 12px;
+    border-radius: 10px;
+    margin-left: 60px;
+  }
+
+  .brand-logo-wrapper img {
+    height: 48px;
+    width: auto;
+    display: block;
+    object-fit: contain;
+  }
+
+  /* Layout */
+  .login-wrapper {
+    display: flex;
+    flex-direction: row;
+    min-height: 100dvh;
+    width: 100%;
+    background: linear-gradient(135deg, #42818C 0%, #91FFC5 55%, #42818C 100%);
+    color: #1e293b;
+    overflow: hidden;
+  }
+
+  @media (max-width:960px) {
+    .login-wrapper {
+      flex-direction: column;
+    }
+
+    .visual-panel {
+      min-height: 340px;
+      border-right: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+  }
+
+  .visual-panel {
+    flex: 1 1 55%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 40px;
+    position: relative;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.20), transparent 70%);
+  }
+
+  .visual-inner {
+    max-width: 520px;
+    width: 100%;
+  }
+
+  .visual-svg-wrapper {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(6px);
+    padding: 24px 16px 32px;
+    border-radius: 24px;
+    position: relative;
+    box-shadow: 0 10px 35px -5px rgba(0, 0, 0, 0.25);
+  }
+
+  .visual-svg-wrapper svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .stats-text {
+    margin-top: 28px;
+    text-align: center;
+    color: #f1f5f9;
+  }
+
+  .stats-text h3 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0 0 12px;
+    color: #201919;
+  }
+
+  .stats-text p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #272c31;
+  }
+
+  .form-section {
+    flex: 1 1 45%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 56px 48px;
+    background: #fff;
+    box-shadow: -8px 0 24px -8px rgba(0, 0, 0, 0.15);
+    position: relative;
+  }
+
+  @media (max-width:960px) {
+    .form-section {
+      box-shadow: 0 -10px 20px -10px rgba(0, 0, 0, 0.15);
+      padding: 48px 32px 64px;
+    }
+  }
+
+  .form-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .form-title {
+    font-size: 1.9rem;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: #1e293b;
+  }
+
+  .form-subtitle {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #64748b;
+  }
+
+  form#login_form {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #334155;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 0.95rem;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    outline: none;
+    background: #f8fafc;
+    transition: border-color .18s, background-color .18s, box-shadow .18s;
+  }
+
+  .form-input:focus {
+    border-color: #42818C;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+  }
+
+  .password-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .password-field .form-input {
+    padding-right: 44px;
+  }
+
+  .password-toggle {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #f1f5f9;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 9px;
+    cursor: pointer;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .18s, color .18s;
+  }
+
+  .password-toggle:hover {
+    background: #e2e8f0;
+    color: #334155;
+  }
+
+  .form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    font-size: 0.85rem;
+  }
+
+  .remember-me {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #475569;
+  }
+
+  .forgot-password a {
+    color: #000000;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .forgot-password a:hover {
+    text-decoration: underline;
+  }
+
+  .login-button {
+    position: relative;
+    width: 100%;
+    border: none;
+    padding: 14px 16px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #42818C, #42818C);
+    color: #fff;
+    cursor: pointer;
+    transition: box-shadow .2s, transform .15s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .login-button:hover:not([disabled]) {
+    box-shadow: 0 8px 22px -6px rgba(41, 41, 56, 0.55);
+  }
+
+  .login-button:active:not([disabled]) {
+    transform: translateY(1px);
+  }
+
+  .login-button[disabled] {
+    opacity: .8;
+    cursor: not-allowed;
+  }
+
+  .login-spinner {
+    display: none;
+  }
+
+  .login-button.loading .login-text {
+    display: none;
+  }
+
+  .login-button.loading .login-spinner {
+    display: inline-flex;
+  }
+
+  #login-message {
+    margin-bottom: 18px;
+    font-size: 0.85rem;
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: none;
+  }
+
+  #login-message.show {
+    display: block;
+  }
+
+  #login-message.success {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #10b981;
+  }
+
+  #login-message.error {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #f87171;
+  }
+
+  .alert {
+    padding: 0;
+    border: none;
+    background: transparent;
+  }
+
+  .visual-panel::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .visual-panel::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .visual-panel::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+  }
+</style>
+{% endblock %}
+
+{% block page_content %}
+<div class="brand-logo-wrapper">
+  <img src="/assets/whitelabel/images/whitelabel_logo.png" alt="Nexo4 ERP Logo" loading="lazy" />
+</div>
+
+<div class="login-wrapper">
+  <!-- Visual panel -->
+  <div class="visual-panel">
+    <div class="visual-inner">
+      <div class="visual-svg-wrapper">
+        <svg viewBox="0 0 420 300" role="img" aria-labelledby="analyticsTitle" preserveAspectRatio="xMidYMid meet">
+          <title id="analyticsTitle">Analytics Dashboard Illustration</title>
+          <!-- Main dashboard container -->
+          <rect x="50" y="80" width="300" height="180" rx="12" fill="white" stroke="#e2e8f0" stroke-width="2" />
+          <!-- Header bar -->
+          <rect x="50" y="80" width="300" height="40" rx="12" fill="#f8fafc" />
+          <rect x="50" y="108" width="300" height="2" fill="#e2e8f0" />
+          <!-- Header dots -->
+          <circle cx="70" cy="100" r="4" fill="#ef4444" />
+          <circle cx="85" cy="100" r="4" fill="#f59e0b" />
+          <circle cx="100" cy="100" r="4" fill="#10b981" />
+          <!-- Chart 1 - Bar Chart -->
+          <rect x="70" y="140" width="80" height="60" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" rx="4" />
+          <rect x="80" y="170" width="8" height="20" fill="#667eea" rx="2" />
+          <rect x="92" y="160" width="8" height="30" fill="#764ba2" rx="2" />
+          <rect x="104" y="175" width="8" height="15" fill="#667eea" rx="2" />
+          <rect x="116" y="155" width="8" height="35" fill="#764ba2" rx="2" />
+          <rect x="128" y="165" width="8" height="25" fill="#667eea" rx="2" />
+          <!-- Chart 2 - Line Chart -->
+          <rect x="170" y="140" width="80" height="60" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" rx="4" />
+          <polyline points="180,180 190,170 200,175 210,160 220,165 230,155 240,160" stroke="#667eea" stroke-width="2"
+            fill="none" />
+          <circle cx="180" cy="180" r="2" fill="#667eea" />
+          <circle cx="190" cy="170" r="2" fill="#667eea" />
+          <circle cx="200" cy="175" r="2" fill="#667eea" />
+          <circle cx="210" cy="160" r="2" fill="#667eea" />
+          <circle cx="220" cy="165" r="2" fill="#667eea" />
+          <circle cx="230" cy="155" r="2" fill="#667eea" />
+          <circle cx="240" cy="160" r="2" fill="#667eea" />
+          <!-- Chart 3 - Pie Chart -->
+          <rect x="270" y="140" width="60" height="60" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" rx="4" />
+          <circle cx="300" cy="170" r="18" fill="none" stroke="#e2e8f0" stroke-width="2" />
+          <path d="M 300 152 A 18 18 0 0 1 318 170 L 300 170 Z" fill="#667eea" />
+          <path d="M 318 170 A 18 18 0 0 1 300 188 L 300 170 Z" fill="#764ba2" />
+          <path d="M 300 188 A 18 18 0 0 1 282 170 L 300 170 Z" fill="#a855f7" />
+          <path d="M 282 170 A 18 18 0 0 1 300 152 L 300 170 Z" fill="#06b6d4" />
+          <!-- Numbers and stats -->
+          <text x="80" y="230" font-family="Arial, sans-serif" font-size="14" font-weight="bold"
+            fill="#1e293b">$2.4M</text>
+          <text x="80" y="245" font-family="Arial, sans-serif" font-size="10" fill="#64748b">Revenue</text>
+          <text x="150" y="230" font-family="Arial, sans-serif" font-size="14" font-weight="bold"
+            fill="#1e293b">+23%</text>
+          <text x="150" y="245" font-family="Arial, sans-serif" font-size="10" fill="#64748b">Growth</text>
+          <text x="210" y="230" font-family="Arial, sans-serif" font-size="14" font-weight="bold"
+            fill="#1e293b">1,247</text>
+          <text x="210" y="245" font-family="Arial, sans-serif" font-size="10" fill="#64748b">Users</text>
+          <text x="270" y="230" font-family="Arial, sans-serif" font-size="14" font-weight="bold"
+            fill="#1e293b">98.5%</text>
+          <text x="270" y="245" font-family="Arial, sans-serif" font-size="10" fill="#64748b">Uptime</text>
+          <!-- Floating elements -->
+          <rect x="20" y="50" width="60" height="20" rx="10" fill="white" stroke="#e2e8f0" stroke-width="1" />
+          <text x="50" y="63" font-family="Arial, sans-serif" font-size="10" fill="#64748b"
+            text-anchor="middle">Analytics</text>
+          <rect x="320" y="200" width="50" height="20" rx="10" fill="white" stroke="#e2e8f0" stroke-width="1" />
+          <text x="345" y="213" font-family="Arial, sans-serif" font-size="10" fill="#64748b"
+            text-anchor="middle">Reports</text>
+          <!-- Decorative arrows -->
+          <path d="M 15 120 L 25 115 L 25 125 Z" fill="#667eea" opacity="0.6" />
+          <path d="M 375 180 L 385 175 L 385 185 Z" fill="#764ba2" opacity="0.6" />
+        </svg>
+      </div>
+      <div class="stats-text">
+        <h3>Zero Chaos. Maximum Control — </h3>
+        <p>Transforming complexity into clarity..</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form section -->
+  <div class="form-section">
+    <div class="form-container">
+      <div id="login-message" class="alert" aria-live="polite"></div>
+      <div class="form-header">
+        <h1 class="form-title">Welcome to NEXO ERP</h1>
+        <p class="form-subtitle">Login to your Account</p>
+      </div>
+      <form id="login_form" method="POST" action="/api/method/login" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <div class="form-group">
+          <label for="login_email" class="form-label">Email</label>
+          <input type="text" id="login_email" name="usr" class="form-input" placeholder="Email" required
+            autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="login_password" class="form-label">Password</label>
+          <div class="password-field">
+            <input type="password" id="login_password" name="pwd" class="form-input" placeholder="Password" required
+              autocomplete="current-password">
+            <button type="button" class="password-toggle" id="password-toggle" aria-label="Show password">
+              <i class="fa fa-eye" id="password-eye"></i>
+            </button>
+          </div>
+        </div>
+        <div class="form-options">
+          <div class="remember-me">
+            <input type="checkbox" id="remember_me" name="remember_me" value="1">
+            <label for="remember_me">Remember me</label>
+          </div>
+          <div class="forgot-password">
+            <a href="/forgot-password">Forgot Password?</a>
+          </div>
+        </div>
+        <button type="submit" class="login-button" id="login-btn">
+          <span class="login-text">Login</span>
+          <span class="login-spinner">
+            <i class="fa fa-spinner fa-spin"></i> Signing in...
+          </span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  (function () {
+    const passwordField = document.getElementById('login_password');
+    const toggleBtn = document.getElementById('password-toggle');
+    const eyeIcon = document.getElementById('password-eye');
+    const form = document.getElementById('login_form');
+    const btn = document.getElementById('login-btn');
+    const msg = document.getElementById('login-message');
+
+    function setMessage(type, text) {
+      msg.className = 'alert';
+      msg.classList.add(type === 'success' ? 'success' : 'error', 'show');
+      msg.textContent = text;
+    }
+
+    function clearMessage() {
+      msg.className = 'alert';
+      msg.textContent = '';
+    }
+
+    toggleBtn.addEventListener('click', function () {
+      if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
+        toggleBtn.setAttribute('aria-label', 'Hide password');
+      } else {
+        passwordField.type = 'password';
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
+        toggleBtn.setAttribute('aria-label', 'Show password');
+      }
+    });
+
+    function parseRedirect() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('redirect-to') || '/app';
+    }
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      clearMessage();
+      btn.disabled = true;
+      btn.classList.add('loading');
+      btn.setAttribute('aria-busy', 'true');
+
+      try {
+        const fd = new FormData(form);
+        const res = await fetch('/api/method/login', {
+          method: 'POST',
+          body: fd,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data && data.message === 'Logged In') {
+          setMessage('success', 'Login successful. Redirecting...');
+          const target = parseRedirect();
+          setTimeout(() => { window.location.href = target; }, 400);
+        } else {
+          let err = (data && (data.message || data.exc)) || 'Invalid credentials';
+          if (typeof err === 'string' && err.startsWith('Traceback')) err = 'Login failed';
+          setMessage('error', err);
+          btn.disabled = false;
+          btn.classList.remove('loading');
+          btn.removeAttribute('aria-busy');
+        }
+      } catch (ex) {
+        setMessage('error', 'Network error. Please try again.');
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        btn.removeAttribute('aria-busy');
+      }
+    });
+  })();
+</script>
+{% endblock %}

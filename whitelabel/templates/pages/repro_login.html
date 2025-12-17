@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXO 4 ERP | Vital Petroleum</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* -------------------------------- */
+    /*          GLOBAL STYLES           */
+    /* -------------------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Plus Jakarta Sans", sans-serif;
+      background: #0f172a;
+      color: white;
+      overflow-x: hidden;
+      overflow-y: auto;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Utility */
+    .flex {
+      display: flex;
+    }
+
+    .center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Smooth fade-in for page */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeIn 1s forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* -------------------------------- */
+    /*            CANVAS BG             */
+    /* -------------------------------- */
+    .bg-wrapper {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(to bottom right, #0f172a, #0b1320, #030712);
+    }
+
+    canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    /* -------------------------------- */
+    /*     ORBS (teal + white glow)     */
+    /* -------------------------------- */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0;
+      transition: 1s;
+    }
+
+    .orb.show {
+      opacity: 1;
+    }
+
+    .orb.one {
+      top: -10%;
+      left: -10%;
+      width: 1000px;
+      height: 1000px;
+      background: rgba(6, 182, 212, 0.15);
+    }
+
+    .orb.two {
+      bottom: -10%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* -------------------------------- */
+    /*       MAIN LOGIN WRAPPER         */
+    /* -------------------------------- */
+    .login-card {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 750px;
+      min-height: auto;
+      background: rgba(30, 41, 59, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(30px);
+      border-radius: 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      display: flex;
+      overflow: hidden;
+      animation: fadeIn 1.2s ease-out forwards;
+    }
+
+    /* -------------------------------- */
+    /*       LEFT BRANDING SIDE         */
+    /* -------------------------------- */
+    .left {
+      width: 50%;
+      padding: 24px;
+      position: relative;
+      background: linear-gradient(to bottom right, #0f172aef, #1e293bef);
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .left .texture {
+      position: absolute;
+      inset: 0;
+      opacity: 0.08;
+      background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+    }
+
+    .brand-line {
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Logo bars */
+    .bars {
+      display: flex;
+      gap: 4px;
+      align-items: flex-end;
+      height: 50px;
+    }
+
+    .bars div {
+      width: 8px;
+      border-radius: 2px;
+      background: #06b6d4;
+      animation: pulse 1.8s infinite ease-in-out;
+    }
+
+    .bars div:nth-child(1) {
+      height: 24px;
+      animation-delay: 0ms;
+    }
+
+    .bars div:nth-child(2) {
+      height: 40px;
+      animation-delay: 150ms;
+    }
+
+    .bars div:nth-child(3) {
+      height: 32px;
+      animation-delay: 300ms;
+    }
+
+    .bars div:nth-child(4) {
+      height: 48px;
+      animation-delay: 450ms;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 0.6;
+        transform: translateY(0);
+      }
+
+      50% {
+        opacity: 1;
+        transform: translateY(-4px);
+      }
+    }
+
+    .left h1 {
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #fff, #06b6d4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: pulseSlow 3s infinite;
+    }
+
+    @keyframes pulseSlow {
+      50% {
+        opacity: 0.7;
+      }
+    }
+
+    .left p.powered-by {
+      color: #94a3b8;
+      font-size: 18px;
+      border-left: 3px solid #06b6d4;
+      padding-left: 12px;
+      margin-bottom: 20px;
+    }
+
+    /* Feature Cards */
+    .features-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .feature-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 16px;
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      transition: all 0.3s ease;
+      cursor: default;
+      opacity: 0;
+      animation: slideUpFade 0.8s ease-out forwards;
+    }
+
+    .feature-card:nth-child(1) {
+      animation-delay: 0.2s;
+    }
+
+    .feature-card:nth-child(2) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes slideUpFade {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .feature-card:hover {
+      background: rgba(30, 41, 59, 0.6);
+      border-color: rgba(6, 182, 212, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .icon-box {
+      width: 44px;
+      height: 44px;
+      background: rgba(6, 182, 212, 0.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #06b6d4;
+      flex-shrink: 0;
+    }
+
+    .icon-box svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .text-box h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #f1f5f9;
+    }
+
+    .text-box p {
+      font-size: 13px;
+      color: #94a3b8;
+      margin: 0;
+      padding: 0;
+      border: none;
+      line-height: 1.4;
+    }
+
+    /* -------------------------------- */
+    /*        RIGHT LOGIN FORM          */
+    /* -------------------------------- */
+    .right {
+      width: 50%;
+      padding: 40px;
+      position: relative;
+      background: rgba(15, 23, 42, 0.55);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* Inputs */
+    .input-group {
+      margin-bottom: 12px;
+    }
+
+    label {
+      font-size: 14px;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .input-box {
+      position: relative;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(100, 116, 139, 0.4);
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: white;
+      transition: .3s;
+    }
+
+    .input-box:hover {
+      background: rgba(30, 41, 59, 0.8);
+    }
+
+    .input-box:focus-within {
+      border-color: #06b6d4;
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.25);
+    }
+
+    .input-box input {
+      width: 100%;
+      background: none;
+      border: none;
+      outline: none;
+      color: white;
+      font-size: 15px;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 18px;
+    }
+
+    /* Remember Me & Forgot Password */
+    .form-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: -10px;
+      margin-bottom: 16px;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    .remember-me input {
+      accent-color: #06b6d4;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .forgot {
+      font-size: 13px;
+      color: #06b6d4;
+      text-decoration: none;
+      transition: .2s;
+    }
+
+    .forgot:hover {
+      color: #22d3ee;
+      text-decoration: underline;
+    }
+
+    /* LOGIN BUTTON */
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 18px;
+      color: white;
+      background: #06b6d4;
+      border: none;
+      cursor: pointer;
+      transition: .3s;
+      margin-top: 0;
+    }
+
+    button:hover {
+      background: #0ea5b9;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 900px) {
+      .login-card {
+        flex-direction: column;
+        height: auto;
+        min-height: auto;
+      }
+
+      .left,
+      .right {
+        width: 100%;
+        padding: 40px 30px;
+      }
+
+      .left {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .left h1 {
+        font-size: 42px;
+      }
+
+      .brand-line {
+        margin-bottom: 30px;
+      }
+
+      .brand-line img {
+        height: 48px !important;
+      }
+
+      .brand-line span {
+        font-size: 22px !important;
+      }
+
+      .brand-line img:last-child {
+        height: 32px !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+
+      .left,
+      .right {
+        padding: 30px 20px;
+      }
+
+      .left h1 {
+        font-size: 32px;
+      }
+
+      .feature-card {
+        padding: 12px 16px;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- Background Gradient + Canvas -->
+  <div class="bg-wrapper">
+    <canvas id="bgCanvas"></canvas>
+  </div>
+
+  <!-- Orbs -->
+  <div class="orb one" id="orb1"></div>
+  <div class="orb two" id="orb2"></div>
+
+  <!-- MAIN LOGIN CARD -->
+  <div class="login-card center fade-in">
+
+    <!-- LEFT SIDE -->
+    <div class="left">
+      <div class="texture"></div>
+
+      <div class="brand-line">
+        <!-- Placeholder for logo -->
+        <div
+          style="height: 64px; width: 200px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;">
+          LOGO</div>
+      </div>
+
+      <h1>Fueling <br>
+        <span class="gradient-text">Tomorrow</span>
+      </h1>
+
+      <p class="powered-by">Powered by <strong style="color:#67e8f9;">NEXO 4 ERP</strong>.</p>
+
+      <!-- Feature Cards -->
+      <div class="features-container">
+        <!-- Card 1 -->
+        <div class="feature-card">
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+          </div>
+          <div class="text-box">
+            <h3>Real-time Analytics</h3>
+            <p>Live downstream production data</p>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="feature-card">
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <div class="text-box">
+            <h3>Secure Portal</h3>
+            <p>Enterprise-grade security standards</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="right">
+
+      <h2 style="font-size:28px;font-weight:700;margin-bottom:10px;">Welcome back</h2>
+      <p style="color:#94a3b8;margin-bottom:20px;">Please authenticate to access the VITAL Petroleum portal.</p>
+
+      <form id="login_form" method="POST" action="/api/method/login" novalidate>
+        <div id="login-message"
+          style="display:none; margin-bottom: 15px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center;">
+        </div>
+        <input type="hidden" name="csrf_token" value="test_token">
+        <!-- EMAIL -->
+        <div class="input-group">
+          <label for="login_email">Username / Email</label>
+          <div class="input-box">
+            <input type="text" name="usr" placeholder="user@nexo4erp.com" required id="login_email">
+          </div>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="input-group">
+          <label for="login_password">Password</label>
+          <div class="input-box">
+            <input type="password" placeholder="••••••••••••" required name="pwd" id="login_password">
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <label class="remember-me">
+            <input type="checkbox">
+            <span>Remember me</span>
+          </label>
+          <a class="forgot" href="#">Forgot password?</a>
+        </div>
+
+        <button type="submit" id="login-btn">Login →</button>
+      </form>
+
+      <p style="color:#94a3b8;margin-top:40px;">© 2025 NEXO 4 ERP. Licensed to Vital Petroleum.</p>
+
+    </div>
+  </div>
+
+  <script>
+    /* Fade in ORBs */
+    setTimeout(() => {
+      document.getElementById("orb1").classList.add("show");
+      document.getElementById("orb2").classList.add("show");
+    }, 200);
+
+    /* BG PARTICLE CANVAS - Same as your TSX version (converted) */
+    const canvas = document.getElementById("bgCanvas");
+    const ctx = canvas.getContext("2d");
+    let w = canvas.width = innerWidth;
+    let h = canvas.height = innerHeight;
+
+    const colors = [
+      "rgba(6,182,212,0.5)",
+      "rgba(34,211,238,0.3)",
+      "rgba(255,255,255,0.15)"
+    ];
+
+    const particles = []; const count = 80; const distMax = 180;
+
+    class P {
+      constructor() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.size = Math.random() * 2 + 1;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+      }
+      update() {
+        this.x += this.vx; this.y += this.vy;
+        if (this.x < 0 || this.x > w) this.vx *= -1;
+        if (this.y < 0 || this.y > h) this.vy *= -1;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < count; i++) particles.push(new P());
+
+    function animate() {
+      ctx.clearRect(0, 0, w, h);
+      for (let i = 0; i < count; i++) {
+        const p1 = particles[i];
+        p1.update(); p1.draw();
+        for (let j = i + 1; j < count; j++) {
+          const p2 = particles[j];
+          const dx = p1.x - p2.x, dy = p1.y - p2.y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < distMax) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(148,163,184,${0.1 * (1 - d / distMax)})`;
+            ctx.lineWidth = 0.5;
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    addEventListener("resize", () => {
+      w = canvas.width = innerWidth;
+      h = canvas.height = innerHeight;
+    });
+  </script>
+</body>
+
+</html>

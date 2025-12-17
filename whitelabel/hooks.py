@@ -12,13 +12,17 @@ app_icon = "octicon octicon-file-directory"
 app_color = "grey"
 app_email = "maheshwaribhavesh95863@gmail.com"
 app_license = "MIT"
-app_logo_url = '/assets/whitelabel/images/whitelabel_logo.jpg'
+app_logo_url = '/assets/whitelabel/images/whitelabel_logo.png'
 
 # Includes in <head>
 # ------------------
 
 # include js, css files in header of desk.html
-app_include_css = "/assets/whitelabel/css/whitelabel_app.css"
+app_include_css = [
+	"/assets/whitelabel/css/whitelabel_app.css",
+]
+
+
 app_include_js = "/assets/whitelabel/js/whitelabel.js"
 
 # include js, css files in header of web template
@@ -49,9 +53,14 @@ web_include_css = "/assets/whitelabel/css/whitelabel_web.css"
 # get_website_user_home_page = "whitelabel.utils.get_home_page"
 
 website_context = {
-	"favicon": app_logo or "/assets/whitelabel/images/whitelabel_logo.jpg",
-	"splash_image": app_logo or "/assets/whitelabel/images/whitelabel_logo.jpg"
+	"favicon": app_logo or "/assets/whitelabel/images/logo.png",
+	"splash_image": app_logo or "/assets/whitelabel/images/whitelabel_logo.png"
 }
+
+override_web_templates = {
+    "login": "whitelabel/templates/pages/login.html"
+}
+
 after_migrate = ['whitelabel.api.whitelabel_patch']
 
 # Generators
