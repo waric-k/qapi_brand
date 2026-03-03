@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 from . import __version__ as app_version
-from . import __logo__ as app_logo
-
 
 app_name = "whitelabel"
 app_title = "Whitelabel"
@@ -12,7 +8,14 @@ app_icon = "octicon octicon-file-directory"
 app_color = "grey"
 app_email = "maheshwaribhavesh95863@gmail.com"
 app_license = "MIT"
-app_logo_url = '/assets/whitelabel/images/whitelabel_logo.jpg'
+
+# Get app logo
+try:
+	from . import get_logo
+
+	app_logo_url = get_logo() or "/assets/whitelabel/images/whitelabel_logo.jpg"
+except (ImportError, Exception):
+	app_logo_url = "/assets/whitelabel/images/whitelabel_logo.jpg"
 
 # Includes in <head>
 # ------------------
@@ -42,17 +45,14 @@ web_include_css = "/assets/whitelabel/css/whitelabel_web.css"
 
 # website user home page (by Role)
 # role_home_page = {
-#	"Role": "home_page"
+# "Role": "home_page"
 # }
 
 # Website user home page (by function)
 # get_website_user_home_page = "whitelabel.utils.get_home_page"
 
-website_context = {
-	"favicon": app_logo or "/assets/whitelabel/images/whitelabel_logo.jpg",
-	"splash_image": app_logo or "/assets/whitelabel/images/whitelabel_logo.jpg"
-}
-after_migrate = ['whitelabel.api.whitelabel_patch']
+website_context = {"favicon": app_logo_url, "splash_image": app_logo_url}
+after_migrate = ["whitelabel.api.whitelabel_patch"]
 
 # Generators
 # ----------
@@ -93,7 +93,7 @@ after_migrate = ['whitelabel.api.whitelabel_patch']
 # 		"on_update": "method",
 # 		"on_cancel": "method",
 # 		"on_trash": "method"
-#	}
+# }
 # }
 
 # Scheduled Tasks
@@ -123,8 +123,12 @@ boot_session = "whitelabel.api.boot_session"
 
 # before_tests = "whitelabel.install.before_tests"
 
+# Fixtures
+# --------
+# Export data for setup/demo purposes
+
 fixtures = [
-    {"dt": "Custom Field", "filters": [["Translation","source_text","like","%ERPNext%"]]}
+	{"dt": "Translation", "filters": [["source_text", "in", ["ERPNext Settings", "ERPNext Integration"]]]}
 ]
 
 # Overriding Methods
@@ -144,4 +148,3 @@ fixtures = [
 # override_whitelisted_methods = {
 # 	"frappe.utils.change_log.show_update_popup": "whitelabel.api.ignore_update_popup"
 # }
-
