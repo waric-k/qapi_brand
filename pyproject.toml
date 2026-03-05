@@ -4,12 +4,12 @@ authors = [
     { name = "Bhavesh Maheshwari", email = "maheshwaribhavesh95863@gmail.com" }
 ]
 description = "ERPNext Whitelabel - Customizable branding solution for ERPNext"
-requires-python = ">=3.14"
+requires-python = ">=3.10"
 readme = "README.md"
 dynamic = ["version"]
 dependencies = [
     # frappe dependencies
-    "frappe~=16.0"
+    #"frappe~=15.0"
 ]
 
 [project.urls]
