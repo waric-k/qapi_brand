@@ -4,7 +4,7 @@ authors = [
     { name = "Bhavesh Maheshwari", email = "maheshwaribhavesh95863@gmail.com" }
 ]
 description = "ERPNext Whitelabel - Customizable branding solution for ERPNext"
-requires-python = "=3.14"
+requires-python = ">=3.14"
 readme = "README.md"
 dynamic = ["version"]
 dependencies = [
