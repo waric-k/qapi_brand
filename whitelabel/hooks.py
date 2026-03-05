@@ -128,7 +128,7 @@ boot_session = "whitelabel.api.boot_session"
 # Export data for setup/demo purposes
 
 fixtures = [
-	{"dt": "Translation", "filters": [["source_text", "in", ["ERPNext Settings", "ERPNext Integration"]]]}
+	{"dt": "Translation", "filters": [["source_text", "in", ["ERPNext Settings", "ERPNext Integration", "ERPNext","Frappe"]]]}
 ]
 
 # Overriding Methods
