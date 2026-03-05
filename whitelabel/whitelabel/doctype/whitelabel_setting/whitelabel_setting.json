@@ -103,7 +103,7 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "0",
+   "default": "1",
    "fieldname": "disable_new_update_popup",
    "fieldtype": "Check",
    "label": "Disable System Update Notification"
@@ -114,6 +114,7 @@
    "label": "Whitelabel App Name"
   },
   {
+   "default": "/assets/whitelabel/images/whitelabel_logo.png",
    "description": "Upload the logo as public so it can accessible at login page ",
    "fieldname": "application_logo",
    "fieldtype": "Attach",
@@ -141,7 +142,7 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "0",
+   "default": "1",
    "fieldname": "disable_standard_footer",
    "fieldtype": "Check",
    "label": "Disable Standard Footer"
