@@ -4,12 +4,12 @@ authors = [
     { name = "Bhavesh Maheshwari", email = "maheshwaribhavesh95863@gmail.com" }
 ]
 description = "ERPNext Whitelabel - Customizable branding solution for ERPNext"
-requires-python = ">=3.10,<3.14"
+requires-python = "=3.14"
 readme = "README.md"
 dynamic = ["version"]
 dependencies = [
     # frappe dependencies
-    "frappe~=15.0"
+    "frappe~=16.0"
 ]
 
 [project.urls]
@@ -21,6 +21,9 @@ requires = ["flit_core >=3.4,<4"]
 build-backend = "flit_core.buildapi"
 
 [tool.bench.dev-dependencies]
+
+[tool.bench.frappe-dependencies]
+frappe = ">=15.0.0"
 
 [tool.ruff]
 line-length = 110

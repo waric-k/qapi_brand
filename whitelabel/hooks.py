@@ -13,9 +13,9 @@ app_license = "MIT"
 try:
 	from . import get_logo
 
-	app_logo_url = get_logo() or "/assets/whitelabel/images/whitelabel_logo.jpg"
+	app_logo_url = get_logo() or "/assets/whitelabel/images/whitelabel_logo.png"
 except (ImportError, Exception):
-	app_logo_url = "/assets/whitelabel/images/whitelabel_logo.jpg"
+	app_logo_url = "/assets/whitelabel/images/whitelabel_logo.png"
 
 # Includes in <head>
 # ------------------
