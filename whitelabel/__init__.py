@@ -6,7 +6,7 @@ def get_logo():
 		import frappe
 
 		if frappe.conf and frappe.conf.get("app_logo_url"):
-			return frappe.conf.get("app_logo_url") or "/assets/whitelabel/images/whitelabel_logo.png"
+			return "/assets/whitelabel/images/whitelabel_logo.png"
 		else:
 			return "/assets/whitelabel/images/whitelabel_logo.png"
 	except ImportError:

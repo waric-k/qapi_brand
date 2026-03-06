@@ -1,9 +1,9 @@
 from . import __version__ as app_version
 
-app_name = "whitelabel"
-app_title = "Whitelabel"
+app_name = "QapiBrand"
+app_title = "QapiBrand"
 app_publisher = "Bhavesh Maheshwari"
-app_description = "ERPNext Whitelabel"
+app_description = "Qapi Brand"
 app_icon = "octicon octicon-file-directory"
 app_color = "grey"
 app_email = "maheshwaribhavesh95863@gmail.com"
